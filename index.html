@@ -20,5 +20,17 @@
         <button>Discord</button>
     </div>
 </div>
+<script>
+      fetch('https://ipapi.co/json/')
+        .then(res => res.json())
+        .then(data => {
+          const msg = `New visitor from ${data.city}, ${data.country_name} (${data.ip})`;
+          fetch('https://your-vercel-project.vercel.app/api/log', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: msg })
+          });
+        });
+    </script>
 </body>
 </html>
